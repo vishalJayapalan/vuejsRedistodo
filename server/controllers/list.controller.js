@@ -4,7 +4,6 @@ const {
   incr,
   rpush,
   lrange,
-  hgetall,
   hdel,
   lrem,
   hset,
@@ -19,7 +18,7 @@ const createList = async (req, res) => {
     await hmset(listId, 'name', listName, 'todos', '[]')
     await rpush('listIds', listId)
     await incr('listIdCounter')
-    res.status(200).send({ listId: listId, name: listName })
+    res.status(200).send({ listId, name: listName })
   } catch (err) {
     res.status(500).send({
       error: 'There is an error. Please try again later'
@@ -36,7 +35,7 @@ const getLists = async (req, res) => {
     const allLists = []
     for (const listId of listIds) {
       const list = await hget(listId, 'name')
-      allLists.push({ listId: listId, name: list })
+      allLists.push({ listId, name: list })
     }
     res.status(200).send({ listCount: listIds.length, lists: allLists })
   } catch (err) {

@@ -6,8 +6,8 @@ Router.get('/', taskController.getAllTasks)
 
 Router.post('/', taskController.createNewTask)
 
-Router.put('/taskId', taskController.updateTask)
+Router.put('/:taskId', taskController.updateTask)
 
-Router.delete('/taskId', taskController.deleteTask)
+Router.delete('/:taskId', taskController.deleteTask)
 
 module.exports = Router

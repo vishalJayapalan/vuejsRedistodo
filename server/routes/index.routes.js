@@ -5,6 +5,6 @@ const taskRouter = require('./task.routes')
 
 Router.use('/list', listRouter)
 
-Router.use('/task', taskRouter)
+Router.use('list/listId/task', taskRouter)
 
 module.exports = Router
