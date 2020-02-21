@@ -1,10 +1,10 @@
 const express = require('express')
 const Router = express.Router()
 const listRouter = require('./list.routes')
-const taskRouter = require('./task.routes')
+const taskRouter = require('./tasks.routes')
 
 Router.use('/list', listRouter)
 
-Router.use('list/listId/task', taskRouter)
+Router.use('/tasks', taskRouter)
 
 module.exports = Router

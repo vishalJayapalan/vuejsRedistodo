@@ -1,6 +1,7 @@
 const { get, incr, hset, hexists, hget } = require('../models/todo.models')
 
 const getAllTasks = async (req, res) => {
+  // console.log('Getting task')
   try {
     const { listId } = req.params
     let tasks = await hexists(listId, 'name')
@@ -50,15 +51,10 @@ const createNewTask = async (req, res) => {
   }
 }
 
-const findTaskIndex = (tasks, taskId) => {
-  return tasks.findIndex(task => task.taskId * 1 === taskId * 1)
-}
-
 const updateTask = async (req, res) => {
   try {
     const { listId, taskId } = req.params
-    const column = req.body.column
-    const value = req.body.value
+    const { column, value } = req.body
     if (!(await hexists(listId, 'todos'))) {
       return res
         .status(404)
@@ -66,13 +62,15 @@ const updateTask = async (req, res) => {
     }
     let tasks = await hget(listId, 'todos')
     tasks = JSON.parse(tasks)
-    const index = findTaskIndex(tasks, taskId)
+    const index = tasks.findIndex(task => task.taskId * 1 === taskId * 1)
     if (index === -1) {
       return res
         .status(404)
         .json({ error: 'The task you are looking for doesnot exist.' })
     }
-    tasks[index].column = value
+    const task = tasks[index]
+    task[`${column}`] = value
+    // tasks[index].column = value
     await hset(listId, 'todos', JSON.stringify(tasks))
     res.status(200).json({ task: tasks[index] })
   } catch (err) {
@@ -85,6 +83,7 @@ const updateTask = async (req, res) => {
 const deleteTask = async (req, res) => {
   try {
     const { listId, taskId } = req.params
+    // const taskId = req.body.taskId
     if (!(await hexists(listId, 'todos'))) {
       return res
         .status(404)
@@ -92,7 +91,7 @@ const deleteTask = async (req, res) => {
     }
     let tasks = await hget(listId, 'todos')
     tasks = JSON.parse(tasks)
-    const index = findTaskIndex(tasks, taskId)
+    const index = tasks.findIndex(task => task.taskId * 1 === taskId * 1)
     if (index === -1) {
       return res
         .status(404)

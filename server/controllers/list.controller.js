@@ -12,9 +12,12 @@ const {
 } = require('../models/todo.models')
 
 const createList = async (req, res) => {
+  console.log('inHere')
   const { listName } = req.body
+  console.log(listName)
   try {
     const listId = await get('listIdCounter')
+    console.log('listid', listId)
     await hmset(listId, 'name', listName, 'todos', '[]')
     await rpush('listIds', listId)
     await incr('listIdCounter')
@@ -27,8 +30,11 @@ const createList = async (req, res) => {
 }
 
 const getLists = async (req, res) => {
+  console.log('for getting')
   try {
+    console.log('coming here also')
     const listIds = await lrange('listIds', 0, -1)
+    console.log(listIds)
     if (!listIds.length) {
       return res.status(200).send({ listCount: 0, lists: [] })
     }
