@@ -11,13 +11,29 @@ const {
   hget
 } = require('../models/todo.models')
 
+const getLists = async (req, res) => {
+  try {
+    const listIds = await lrange('listIds', 0, -1)
+    if (!listIds.length) {
+      return res.status(200).send({ listCount: 0, lists: [] })
+    }
+    const allLists = []
+    for (const listId of listIds) {
+      const list = await hget(listId, 'name')
+      allLists.push({ listId, name: list })
+    }
+    res.status(200).send({ lists: allLists })
+  } catch (err) {
+    res
+      .status(500)
+      .send({ error: 'There was an error. Please try again later' })
+  }
+}
+
 const createList = async (req, res) => {
-  console.log('inHere')
   const { listName } = req.body
-  console.log(listName)
   try {
     const listId = await get('listIdCounter')
-    console.log('listid', listId)
     await hmset(listId, 'name', listName, 'todos', '[]')
     await rpush('listIds', listId)
     await incr('listIdCounter')
@@ -29,41 +45,49 @@ const createList = async (req, res) => {
   }
 }
 
-const getLists = async (req, res) => {
-  console.log('for getting')
-  try {
-    console.log('coming here also')
-    const listIds = await lrange('listIds', 0, -1)
-    console.log(listIds)
-    if (!listIds.length) {
-      return res.status(200).send({ listCount: 0, lists: [] })
-    }
-    const allLists = []
-    for (const listId of listIds) {
-      const list = await hget(listId, 'name')
-      allLists.push({ listId, name: list })
-    }
-    res.status(200).send({ listCount: listIds.length, lists: allLists })
-  } catch (err) {
-    res
-      .status(500)
-      .send({ error: 'There was an error. Please try again later' })
-  }
-}
+// const getLists = (req, res) => {
+//   try {
+//     lrange('listIds', 0, -1, (err, listIds) => {
+//       if (err) throw err
+//       console.log(!listIds.length)
+//       if (!listIds.length) {
+//         console.log('why here')
+//         return res.status(200).send({ listCount: 0, lists: [] })
+//       }
+//       const allLists = []
+//       for (const listId of listIds) {
+//         hget(listId, 'name', (err, list) => {
+//           if (err) throw err
+//           console.log('individual list name', list)
+//           allLists.push({ listId, name: list })
+//         })
+//       }
+//       console.log(allLists)
+//       res.status(200).send({ listCount: listIds.length, lists: allLists })
+//     })
+//   } catch (err) {
+//     res
+//       .status(500)
+//       .send({ error: 'There was an error. Please try again later' })
+//   }
+// }
 
 const updateList = async (req, res) => {
   try {
     const { listId } = req.params
-    const { name } = req.body
-    let list = await hexists(listId, 'name')
+    const { listName } = req.body
+    console.log(listId)
+    let list = await hexists(listId, 'listName')
+    console.log()
     if (!list) {
       return res
         .status(404)
         .send({ error: 'The list you are looking for does not exist' })
     }
-    list = await hset(listId, 'name', name)
-    res.status(200).send({ listId: listId, name: name })
+    list = await hset(listId, 'listName', listName)
+    res.status(200).send({ listId: listId, listName: listName })
   } catch (err) {
+    console.log(err)
     res.status(500).send({
       error: 'There was an error. Please try again later'
     })

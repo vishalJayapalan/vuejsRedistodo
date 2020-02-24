@@ -1,7 +1,6 @@
 const { get, incr, hset, hexists, hget } = require('../models/todo.models')
 
 const getAllTasks = async (req, res) => {
-  // console.log('Getting task')
   try {
     const { listId } = req.params
     let tasks = await hexists(listId, 'name')
@@ -43,7 +42,7 @@ const createNewTask = async (req, res) => {
     tasks.push(task)
     const newTask = await hset(listId, 'todos', JSON.stringify(tasks))
     await incr('taskIdCounter')
-    res.status(200).json({ task: task })
+    res.status(201).json({ task: task })
   } catch (err) {
     res.status(500).json({
       error: 'There was an error while connecting. Please try agin later'
@@ -70,7 +69,6 @@ const updateTask = async (req, res) => {
     }
     const task = tasks[index]
     task[`${column}`] = value
-    // tasks[index].column = value
     await hset(listId, 'todos', JSON.stringify(tasks))
     res.status(200).json({ task: tasks[index] })
   } catch (err) {
@@ -83,7 +81,6 @@ const updateTask = async (req, res) => {
 const deleteTask = async (req, res) => {
   try {
     const { listId, taskId } = req.params
-    // const taskId = req.body.taskId
     if (!(await hexists(listId, 'todos'))) {
       return res
         .status(404)

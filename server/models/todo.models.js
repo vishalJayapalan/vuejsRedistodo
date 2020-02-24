@@ -13,7 +13,6 @@ client.on('connect', () => {
 })
 
 const get = promisify(client.get).bind(client)
-// console.log(get)
 const hmset = promisify(client.hmset).bind(client)
 const incr = promisify(client.incr).bind(client)
 const rpush = promisify(client.rpush).bind(client)
@@ -29,13 +28,13 @@ const hget = promisify(client.hget).bind(client)
 // const hmset = client.hmset
 // const incr = client.incr
 // const rpush = client.rpush
-// const lrange = client.lrange.bind(client)
+// const lrange = client.lrange
 // const hgetall = client.hgetall
 // const hdel = client.hdel
 // const lrem = client.lrem
 // const hset = client.hset
 // const hexists = client.hexists
-// const hget = client.hget.bind(client)
+// const hget = client.hget
 
 module.exports = {
   get,

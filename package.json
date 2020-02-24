@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon app.js"
   },
-  "author": "",
+  "author": "vishal jayapalan",
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
