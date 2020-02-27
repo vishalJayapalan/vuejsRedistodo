@@ -45,33 +45,6 @@ const createList = async (req, res) => {
   }
 }
 
-// const getLists = (req, res) => {
-//   try {
-//     lrange('listIds', 0, -1, (err, listIds) => {
-//       if (err) throw err
-//       console.log(!listIds.length)
-//       if (!listIds.length) {
-//         console.log('why here')
-//         return res.status(200).send({ listCount: 0, lists: [] })
-//       }
-//       const allLists = []
-//       for (const listId of listIds) {
-//         hget(listId, 'name', (err, list) => {
-//           if (err) throw err
-//           console.log('individual list name', list)
-//           allLists.push({ listId, name: list })
-//         })
-//       }
-//       console.log(allLists)
-//       res.status(200).send({ listCount: listIds.length, lists: allLists })
-//     })
-//   } catch (err) {
-//     res
-//       .status(500)
-//       .send({ error: 'There was an error. Please try again later' })
-//   }
-// }
-
 const updateList = async (req, res) => {
   try {
     const { listId } = req.params

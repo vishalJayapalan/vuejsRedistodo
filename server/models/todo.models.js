@@ -2,7 +2,6 @@ const redis = require('redis')
 const REDIS_PORT = 6379
 const client = redis.createClient(REDIS_PORT)
 const { promisify } = require('util')
-// console.log(promisify(client.get))
 
 client.on('error', err => {
   console.log(err)
@@ -23,18 +22,6 @@ const lrem = promisify(client.lrem).bind(client)
 const hset = promisify(client.hset).bind(client)
 const hexists = promisify(client.hexists).bind(client)
 const hget = promisify(client.hget).bind(client)
-
-// const get = client.get
-// const hmset = client.hmset
-// const incr = client.incr
-// const rpush = client.rpush
-// const lrange = client.lrange
-// const hgetall = client.hgetall
-// const hdel = client.hdel
-// const lrem = client.lrem
-// const hset = client.hset
-// const hexists = client.hexists
-// const hget = client.hget
 
 module.exports = {
   get,

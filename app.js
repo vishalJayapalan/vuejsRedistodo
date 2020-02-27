@@ -1,8 +1,10 @@
 const express = require('express')
-const port = 3000 // make it only to 3000 if env not used
+const port = 3000
 const app = express()
+const cors = require('cors')
 const routes = require('./server/routes/index.routes')
 
+app.use(cors())
 app.use(express.json())
 app.use('/', routes)
 
