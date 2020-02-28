@@ -6,15 +6,21 @@
     </nav>
     <div class="taskContainer">
       <input
+        :listId="listId"
         type="text"
         class="taskInput"
         placeholder="Enter New Task Name"
-        v-model="newName"
-        @keydown.enter="createTask"
+        v-model="updated"
+        @keydown.enter="[createTask(listId,updated) , updated='']"
       />
       <div class="individualTask" v-for="task in tasks" :key="task.taskName">
         <div class="task" :id="task.taskId">
-          <input type="checkbox" class="checkBox" />
+          <input
+            type="checkbox"
+            class="checkBox"
+            v-model="task.checked"
+            @change="updateTask($event,listId)"
+          />
           <p class="taskName">{{task.tname}}</p>
           <i class="fas fa-angle-down"></i>
         </div>
@@ -22,16 +28,27 @@
         <div class="taskFeatures" :id="task.taskId">
           <p class="notes">Notes</p>
           <p class="dueDate">Due Date</p>
-          <textarea class="textNotes" cols="30" rows="10"></textarea>
-          <input type="date" class="date" />
+          <textarea
+            class="textNotes"
+            cols="30"
+            rows="10"
+            v-model="task.notes"
+            @change="updateTask($event,listId)"
+          ></textarea>
+          <input type="date" class="date" v-model="task.date" @change="updateTask($event,listId)" />
           <p class="priority">priority</p>
-          <select name="priority" class="prioritySelect" id>
+          <select
+            name="priority"
+            class="prioritySelect"
+            v-model="task.priority"
+            @change="updateTask($event,listId)"
+          >
             <option value="0">None</option>
             <option value="1">Low</option>
             <option value="2">Medium</option>
             <option value="3">High</option>
           </select>
-          <button class="dltBtn">DELETE</button>
+          <button class="dltBtn" @click="deleteTask($event,listId)">DELETE</button>
         </div>
       </div>
     </div>
@@ -43,7 +60,11 @@ export default {
   props: {
     tasks: Array,
     back: Function,
-    newName: String
+    updated: String,
+    createTask: Function,
+    listId: String,
+    deleteTask: Function,
+    updateTask: Function
   }
 };
 </script>

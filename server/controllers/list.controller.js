@@ -20,7 +20,7 @@ const getLists = async (req, res) => {
     const allLists = []
     for (const listId of listIds) {
       const list = await hget(listId, 'name')
-      allLists.push({ listId, name: list })
+      allLists.push({ listId, listName: list })
     }
     res.status(200).send({ lists: allLists })
   } catch (err) {
@@ -32,12 +32,15 @@ const getLists = async (req, res) => {
 
 const createList = async (req, res) => {
   const { listName } = req.body
+  // console.log(req)
+  // console.log(req.body)
+  // console.log(listName)
   try {
     const listId = await get('listIdCounter')
     await hmset(listId, 'name', listName, 'todos', '[]')
     await rpush('listIds', listId)
     await incr('listIdCounter')
-    res.status(200).send({ listId, name: listName })
+    res.status(200).send({ listId, listName: listName })
   } catch (err) {
     res.status(500).send({
       error: 'There is an error. Please try again later'
@@ -51,7 +54,6 @@ const updateList = async (req, res) => {
     const { listName } = req.body
     console.log(listId)
     let list = await hexists(listId, 'listName')
-    console.log()
     if (!list) {
       return res
         .status(404)
@@ -70,6 +72,7 @@ const updateList = async (req, res) => {
 const deleteList = async (req, res) => {
   try {
     const { listId } = req.params
+    console.log(listId)
     let delList = await lrem('listIds', 0, listId)
     if (!delList) {
       return res.status(404).send({ error: 'The list doesnot exist' })

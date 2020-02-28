@@ -1,7 +1,7 @@
 <template>
   <div class="listPage">
     <nav class="listNav">
-      <button class="newListButton">New List</button>
+      <button class="newListButton" @click="createListBtn">New List</button>
       <div class="buttonGroup">
         <button class="btnGroup">Lists</button>
         <button class="btnGroup">Scheduled</button>
@@ -9,11 +9,20 @@
       </div>
       <button>Search</button>
     </nav>
-    <input class="newListInput" type="text" placeholder="Please Enter New List Name" />
+    <input
+      class="newListInput"
+      type="text"
+      placeholder="Please Enter New List Name"
+      v-model="updated"
+      v-on:keyup.enter="createList(updated)"
+    />
     <div class="listContainer">
       <div class="individualList" v-for="list of lists" :key="list.listId">
-        <div :id="list.listId" class="tasksInside" @click="openTask"></div>
-        <p>{{list.name}}</p>
+        <div :id="list.listId">
+          <div class="tasksInside" @click="openTask($event)"></div>
+          <i class="fas fa-archive" @click="deleteList($event)"></i>
+          <p class="listName" @click="updateList()">{{list.listName}}</p>
+        </div>
       </div>
     </div>
   </div>
@@ -23,7 +32,12 @@
 export default {
   props: {
     lists: Array,
-    openTask: Function
+    createList: Function,
+    openTask: Function,
+    updated: String,
+    createListBtn: Function,
+    deleteList: Function,
+    updateList: Function
   }
 };
 </script>
@@ -45,11 +59,15 @@ export default {
 }
 .listContainer {
   display: flex;
+  flex-wrap: wrap;
 }
 .tasksInside {
   margin: 20px;
   width: 150px;
   height: 150px;
   background-color: honeydew;
+}
+.listName {
+  display: inline-block;
 }
 </style>
