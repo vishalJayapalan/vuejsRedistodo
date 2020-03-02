@@ -9,6 +9,8 @@
       :createList="createList"
       :deleteList="deleteList"
       :updateList="updateList"
+      :inputToggle="inputToggle"
+      :inputToggleFunction="inputToggleFunction"
     />
     <Task
       :tasks="tasks"
@@ -36,6 +38,7 @@ export default {
   data() {
     return {
       listId: 0,
+      inputToggle: true,
       inList: true,
       listCount: 0,
       lists: [],
@@ -77,12 +80,20 @@ export default {
           })
           .then(response => response.json())
           .then(jsonData => {
-            this.listCount = jsonData.listId;
-            this.lists.push({ listId: jsonData.listCount, listName: updated });
+            this.listId = jsonData.listId;
+            this.lists.push({ listId: jsonData.listId, listName: updated });
           });
       }
       let input = document.querySelector(".newListInput");
       input.style.display = "none";
+    },
+    inputToggleFunction() {
+      this.inputToggle = !this.inputToggle;
+
+      // let input = event.target;
+      // console.log(input);
+      // input.replaceChild(,input);
+      // this.inputToggle = !this.inputToggle;
     },
     deleteList(event) {
       // console.log(event.target);
@@ -99,24 +110,27 @@ export default {
       const deleteElement = event.target.parentNode.parentNode;
       deleteElement.parentNode.removeChild(deleteElement);
     },
-    updateList(event) {
-      console.log(event);
-      //   const listId=0;
+    updateList(event, listName) {
+      // console.log(event);
+      // console.log(listName);
+      const listId = event.target.parentNode.id;
+      // console.log(listName);
       //   const listName=0;
-      //   window
-      //     .fetch(`http://localhost:3000/list/${listId}/`, {
-      //       method: "PUT",
-      //       body:{listName:  listName  },
-      //       headers: {
-      //         "Content-Type": "application/json"
-      //       }
-      //     })
+      // console.log(listId);
+      window.fetch(`http://localhost:3000/list/${listId}/`, {
+        method: "PUT",
+        body: JSON.stringify({ listName: listName }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
       //     .then(response => console.log(response.json()))
+      this.inputToggle = !this.inputToggle;
     },
     back() {
       this.inList = true;
       this.getLists();
-      console.log(this.lists);
+      // console.log(this.lists);
       this.tasks = [];
     },
     openTask(event) {
@@ -170,12 +184,7 @@ export default {
       deleteElement.parentNode.removeChild(deleteElement);
     },
     updateTask(event, listId) {
-      console.log(this.tasks.length, "length");
-      console.log(this.tasks[0], "tasks");
-      console.log(event);
       const taskId = event.target.parentNode.id;
-      console.log(this.tasks);
-      console.log(listId);
       window.fetch(`http://localhost:3000/tasks/${listId}/task/${taskId}`, {
         method: "PUT",
         body: JSON.stringify({ tasks: this.tasks }),

@@ -55,7 +55,7 @@ const updateTask = async (req, res) => {
     const { listId } = req.params
     const { tasks } = req.body
     // console.log(req.body)
-    console.log(tasks)
+    // console.log(tasks)
     // const { taskId, tname, checked, priority, date, notes } = req.body
     if (!(await hexists(listId, 'todos'))) {
       return res
@@ -73,7 +73,7 @@ const updateTask = async (req, res) => {
     // const tasks = tasks[index]
     // tasks[index] = task
     // task[`${column}`] = value
-    console.log(tasks)
+    // console.log(tasks)
     await hset(listId, 'todos', JSON.stringify(tasks))
     res.status(200).json({ task: tasks })
   } catch (err) {

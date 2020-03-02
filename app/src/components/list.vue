@@ -21,7 +21,18 @@
         <div :id="list.listId">
           <div class="tasksInside" @click="openTask($event)"></div>
           <i class="fas fa-archive" @click="deleteList($event)"></i>
-          <p class="listName" @click="updateList()">{{list.listName}}</p>
+
+          <p
+            class="listName"
+            v-if="inputToggle"
+            @click="inputToggler(list.listId)"
+          >{{list.listName}}</p>
+          <input
+            type="text"
+            v-model="list.listName"
+            @keyup.enter="updateList($event,list.listName)"
+            v-if="!inputToggle && selectedKey === list.listId"
+          />
         </div>
       </div>
     </div>
@@ -37,7 +48,20 @@ export default {
     updated: String,
     createListBtn: Function,
     deleteList: Function,
-    updateList: Function
+    updateList: Function,
+    inputToggle: Boolean,
+    inputToggleFunction: Function
+  },
+  data() {
+    return {
+      selectedKey: null
+    };
+  },
+  methods: {
+    inputToggler(key) {
+      this.selectedKey = key;
+      this.inputToggle = false;
+    }
   }
 };
 </script>
