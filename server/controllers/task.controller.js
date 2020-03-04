@@ -3,7 +3,7 @@ const { get, incr, hset, hexists, hget } = require('../models/todo.models')
 const getAllTasks = async (req, res) => {
   try {
     const { listId } = req.params
-    let tasks = await hexists(listId, 'name')
+    let tasks = await hexists(listId, 'listName')
     if (!tasks) {
       return res
         .status(404)
@@ -54,26 +54,11 @@ const updateTask = async (req, res) => {
   try {
     const { listId } = req.params
     const { tasks } = req.body
-    // console.log(req.body)
-    // console.log(tasks)
-    // const { taskId, tname, checked, priority, date, notes } = req.body
     if (!(await hexists(listId, 'todos'))) {
       return res
         .status(404)
         .json({ error: 'The list you are looking for doesnot exist.' })
     }
-    // let tasks = await hget(listId, 'todos')
-    // tasks = JSON.parse(tasks)
-    // const index = tasks.findIndex(task => task.taskId * 1 === taskId * 1)
-    // if (index === -1) {
-    //   return res
-    //     .status(404)
-    //     .json({ error: 'The task you are looking for doesnot exist.' })
-    // }
-    // const tasks = tasks[index]
-    // tasks[index] = task
-    // task[`${column}`] = value
-    // console.log(tasks)
     await hset(listId, 'todos', JSON.stringify(tasks))
     res.status(200).json({ task: tasks })
   } catch (err) {

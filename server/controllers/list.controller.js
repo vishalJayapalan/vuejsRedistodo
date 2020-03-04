@@ -32,9 +32,6 @@ const getLists = async (req, res) => {
 
 const createList = async (req, res) => {
   const { listName } = req.body
-  // console.log(req)
-  // console.log(req.body)
-  // console.log(listName)
   try {
     const listId = await get('listIdCounter')
     await hmset(listId, 'listName', listName, 'todos', '[]')
@@ -52,11 +49,7 @@ const updateList = async (req, res) => {
   try {
     const { listId } = req.params
     const { listName } = req.body
-    console.log(listId)
-    console.log(listName)
-    console.log(listId)
     let list = await hexists(listId, 'listName')
-    console.log(list)
     if (!list) {
       return res
         .status(404)
@@ -65,7 +58,6 @@ const updateList = async (req, res) => {
     list = await hset(listId, 'listName', listName)
     res.status(200).send({ listId, listName })
   } catch (err) {
-    console.log(err)
     res.status(500).send({
       error: 'There was an error. Please try again later'
     })
@@ -75,7 +67,6 @@ const updateList = async (req, res) => {
 const deleteList = async (req, res) => {
   try {
     const { listId } = req.params
-    // console.log(listId)
     let delList = await lrem('listIds', 0, listId)
     if (!delList) {
       return res.status(404).send({ error: 'The list doesnot exist' })

@@ -47,23 +47,12 @@ export default {
       taskCount: 0
     };
   },
-  mounted() {
-    window
-      .fetch("http://localhost:3000/list", { method: "get" })
-      .then(response => response.json())
-      .then(jsonData => {
-        this.lists = jsonData.lists;
-      });
+  async created() {
+    let data = await fetch("http://localhost:3000/list", { method: "get" });
+    let jsonData = await data.json();
+    this.lists = jsonData.lists;
   },
   methods: {
-    getLists() {
-      window
-        .fetch("http://localhost:3000/list", { method: "get" })
-        .then(response => response.json())
-        .then(jsonData => {
-          this.lists = jsonData.lists;
-        });
-    },
     createListBtn() {
       let input = document.querySelector(".newListInput");
       input.style.display = "block";
@@ -89,14 +78,8 @@ export default {
     },
     inputToggleFunction() {
       this.inputToggle = !this.inputToggle;
-
-      // let input = event.target;
-      // console.log(input);
-      // input.replaceChild(,input);
-      // this.inputToggle = !this.inputToggle;
     },
     deleteList(event) {
-      // console.log(event.target);
       const listId = event.target.parentNode.id;
       this.lists = this.lists.filter(a => a.listId != listId);
       window
@@ -111,12 +94,7 @@ export default {
       deleteElement.parentNode.removeChild(deleteElement);
     },
     updateList(event, listName) {
-      // console.log(event);
-      // console.log(listName);
       const listId = event.target.parentNode.id;
-      // console.log(listName);
-      //   const listName=0;
-      // console.log(listId);
       window.fetch(`http://localhost:3000/list/${listId}/`, {
         method: "PUT",
         body: JSON.stringify({ listName: listName }),
@@ -124,13 +102,10 @@ export default {
           "Content-Type": "application/json"
         }
       });
-      //     .then(response => console.log(response.json()))
       this.inputToggle = !this.inputToggle;
     },
     back() {
       this.inList = true;
-      this.getLists();
-      // console.log(this.lists);
       this.tasks = [];
     },
     openTask(event) {
@@ -146,7 +121,6 @@ export default {
           this.taskCount = jsonData.taskCount;
           this.tasks = jsonData.tasks;
         });
-      this.lists = [];
     },
     displayTaskFeatures() {},
     createTask(listId, tname) {
@@ -179,7 +153,6 @@ export default {
           "Content-Type": "application/json"
         }
       });
-      // .then(response => console.log(response.json()));
       const deleteElement = event.target.parentNode.parentNode;
       deleteElement.parentNode.removeChild(deleteElement);
     },
