@@ -94,4 +94,28 @@ const deleteTask = async (req, res) => {
   }
 }
 
-module.exports = { getAllTasks, createNewTask, updateTask, deleteTask }
+const clearCompletedTasks = async (req, res) => {
+  try {
+    const { listId } = req.params
+    const { tasks } = req.body
+    if (!(await hexists(listId, 'todos'))) {
+      return res
+        .status(404)
+        .json({ error: 'The list you are looking for doesnot exist.' })
+    }
+    await hset(listId, 'todos', JSON.stringify(tasks))
+    res.status(200).json({ task: tasks })
+  } catch (err) {
+    res.status(200).json({
+      error: 'There was an error while connecting. Plese try again later.'
+    })
+  }
+}
+
+module.exports = {
+  getAllTasks,
+  createNewTask,
+  updateTask,
+  deleteTask,
+  clearCompletedTasks
+}

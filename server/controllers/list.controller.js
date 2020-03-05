@@ -20,7 +20,27 @@ const getLists = async (req, res) => {
     const allLists = []
     for (const listId of listIds) {
       const list = await hget(listId, 'listName')
-      allLists.push({ listId, listName: list })
+      allLists.push({ listId, listName: list, inputToggle: true })
+    }
+    res.status(200).send({ lists: allLists })
+  } catch (err) {
+    res
+      .status(500)
+      .send({ error: 'There was an error. Please try again later' })
+  }
+}
+
+const searchLists = async (req, res) => {
+  try {
+    const { listIds } = req.body
+    // const listIds = await lrange('listIds', 0, -1)
+    if (!listIds.length) {
+      return res.status(200).send({ listCount: 0, lists: [] })
+    }
+    const allLists = []
+    for (const listId of listIds) {
+      const list = await hget(listId, 'listName')
+      allLists.push({ listId, listName: list, inputToggle: true })
     }
     res.status(200).send({ lists: allLists })
   } catch (err) {
@@ -81,4 +101,4 @@ const deleteList = async (req, res) => {
   }
 }
 
-module.exports = { createList, getLists, deleteList, updateList }
+module.exports = { searchLists, createList, getLists, deleteList, updateList }

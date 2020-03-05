@@ -2,8 +2,9 @@
   <div class="taskPage">
     <nav class="taskNav">
       <button class="backToListButton" @click="back">Back</button>
-      <button>ClearCompleted</button>
+      <button @click="clearCompletedTasks(listId)">ClearCompleted</button>
     </nav>
+    {{listName}}
     <div class="taskContainer">
       <input
         :listId="listId"
@@ -13,58 +14,34 @@
         v-model="updated"
         @keydown.enter="[createTask(listId,updated) , updated='']"
       />
-      <div class="individualTask" v-for="task in tasks" :key="task.taskName">
-        <div class="task" :id="task.taskId">
-          <input
-            type="checkbox"
-            class="checkBox"
-            v-model="task.checked"
-            @change="updateTask($event,listId)"
-          />
-          <p class="taskName">{{task.tname}}</p>
-          <i class="fas fa-angle-down"></i>
-        </div>
-        <hr class="hr" :id="task.taskId" />
-        <div class="taskFeatures" :id="task.taskId">
-          <p class="notes">Notes</p>
-          <p class="dueDate">Due Date</p>
-          <textarea
-            class="textNotes"
-            cols="30"
-            rows="10"
-            v-model="task.notes"
-            @change="updateTask($event,listId)"
-          ></textarea>
-          <input type="date" class="date" v-model="task.date" @change="updateTask($event,listId)" />
-          <p class="priority">priority</p>
-          <select
-            name="priority"
-            class="prioritySelect"
-            v-model="task.priority"
-            @change="updateTask($event,listId)"
-          >
-            <option value="0">None</option>
-            <option value="1">Low</option>
-            <option value="2">Medium</option>
-            <option value="3">High</option>
-          </select>
-          <button class="dltBtn" @click="deleteTask($event,listId)">DELETE</button>
-        </div>
+      <div class="individualTask" v-for="task in tasks" :key="task.taskId">
+        <individualTask
+          :task="task"
+          @update-task="$emit('update-task',task.taskId,listId)"
+          @delete-task="$emit('delete-task',task.taskId,listId)"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import individualTask from "./individualTask";
 export default {
+  name: "task",
+  components: {
+    individualTask
+  },
   props: {
     tasks: Array,
     back: Function,
     updated: String,
     createTask: Function,
     listId: String,
+    listName: String,
     deleteTask: Function,
-    updateTask: Function
+    updateTask: Function,
+    clearCompletedTasks: Function
   }
 };
 </script>
@@ -82,6 +59,7 @@ export default {
   margin: 10px;
   width: 50%;
 }
+
 .individualTask {
   margin-top: 10px;
   margin-left: 20%;
@@ -95,6 +73,9 @@ export default {
 .checkBox {
   margin: 2.5%;
 }
+.done {
+  text-decoration: line-through;
+}
 .taskName {
   margin: 7.5px 0;
   min-width: 85%;
@@ -102,7 +83,16 @@ export default {
   overflow: hidden;
 }
 .hr {
-  border: 1px solid yellow;
+  border: 2px solid yellow;
+}
+.c3 {
+  border: 2px solid red;
+}
+.c2 {
+  border: 2px solid darkorange;
+}
+.c1 {
+  border: 2px solid green;
 }
 .taskFeatures {
   display: grid;
@@ -110,6 +100,9 @@ export default {
   padding-bottom: 20px;
   grid-column-gap: 20px;
   background-color: honeydew;
+}
+.noShow {
+  display: none;
 }
 .fas {
   margin-top: 2.5%;
