@@ -5,7 +5,7 @@
         type="checkbox"
         class="checkBox"
         v-model="task.checked"
-        @change="$emit('update-task',task.taskId)"
+        @change="updateTask(task.taskId)"
       />
       <p
         v-if="!taskNameToggle"
@@ -16,7 +16,7 @@
         type="text"
         v-else
         v-model.lazy="task.tname"
-        @keydown.enter="[$emit('update-task',task.taskId), taskNameToggle = !taskNameToggle ]"
+        @keydown.enter="[updateTask(task.taskId), taskNameToggle = !taskNameToggle ]"
       />
       <i class="fas fa-angle-down" @click="show = !show"></i>
     </div>
@@ -29,27 +29,22 @@
         cols="30"
         rows="10"
         v-model="task.notes"
-        @change="$emit('update-task',task.taskId)"
+        @change="updateTask(task.taskId)"
       ></textarea>
-      <input
-        type="date"
-        class="date"
-        v-model="task.date"
-        @change="$emit('update-task',task.taskId)"
-      />
+      <input type="date" class="date" v-model="task.date" @change="updateTask(task.taskId)" />
       <p class="priority">priority</p>
       <select
         name="priority"
         class="prioritySelect"
         v-model="task.priority"
-        @change="$emit('update-task',task.taskId)"
+        @change="updateTask(task.taskId)"
       >
         <option value="0">None</option>
         <option value="1">Low</option>
         <option value="2">Medium</option>
         <option value="3">High</option>
       </select>
-      <button class="dltBtn" @click="$emit('delete-task',task.taskId)">DELETE</button>
+      <button class="dltBtn" @click="deleteTask(task.taskId,listId)">DELETE</button>
     </div>
   </div>
 </template>
@@ -58,7 +53,10 @@
 export default {
   name: "individualTask",
   props: {
-    task: Object
+    task: Object,
+    deleteTask: Function,
+    updateTask: Function,
+    listId: String
   },
   data() {
     return {

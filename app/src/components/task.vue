@@ -4,7 +4,7 @@
       <button class="backToListButton" @click="back">Back</button>
       <button @click="clearCompletedTasks(listId)">ClearCompleted</button>
     </nav>
-    {{listName}}
+    <strong class="listNameInTask">{{listName | upperCase}}</strong>
     <div class="taskContainer">
       <input
         :listId="listId"
@@ -13,12 +13,14 @@
         placeholder="Enter New Task Name"
         v-model="updated"
         @keydown.enter="[createTask(listId,updated) , updated='']"
+        autofocus
       />
       <div class="individualTask" v-for="task in tasks" :key="task.taskId">
         <individualTask
           :task="task"
-          @update-task="$emit('update-task',task.taskId,listId)"
-          @delete-task="$emit('delete-task',task.taskId,listId)"
+          :updateTask="updateTask"
+          :deleteTask="deleteTask"
+          :listId="listId"
         />
       </div>
     </div>
@@ -32,28 +34,72 @@ export default {
   components: {
     individualTask
   },
+  data() {
+    return {
+      updated: ""
+    };
+  },
   props: {
     tasks: Array,
     back: Function,
-    updated: String,
     createTask: Function,
     listId: String,
     listName: String,
     deleteTask: Function,
-    updateTask: Function,
     clearCompletedTasks: Function
+  },
+  methods: {
+    updateTask(taskId) {
+      let array = this.tasks;
+      // dateSorting
+      array.sort(function(a, b) {
+        a = new Date(a.date).getTime();
+        b = new Date(b.date).getTime();
+        if ((a === b) === new Date(false).getTime()) return 0;
+        if (b === new Date(false).getTime()) return -1;
+        return a - b;
+      });
+
+      // prioritySorting
+      array.sort((a, b) => b.priority - a.priority);
+
+      // doneSorting
+      array.sort((a, b) => {
+        a = a.checked;
+        b = b.checked;
+        if (a === b) return 0;
+        if (a === false) return -1;
+        if (b === false) return 1;
+      });
+      window.fetch(
+        `http://localhost:3000/tasks/${this.listId}/task/${taskId}`,
+        {
+          method: "PUT",
+          body: JSON.stringify({ tasks: this.tasks }),
+          headers: {
+            "Content-Type": "application/json"
+          }
+        }
+      );
+    }
+  },
+  filters: {
+    upperCase(value) {
+      return value.toUpperCase();
+    }
   }
 };
 </script>
 
 <style>
+.listNameInTask {
+  font-size: 200%;
+}
 .taskNav {
   display: flex;
   justify-content: space-between;
   background-color: black;
   height: 30px;
-}
-.taskContainer {
 }
 .taskInput {
   margin: 10px;

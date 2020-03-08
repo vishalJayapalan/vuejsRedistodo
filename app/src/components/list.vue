@@ -1,35 +1,38 @@
 <template>
   <div class="listPage">
     <nav class="listNav">
-      <button class="newListButton" @click="createListBtn">New List</button>
-      <div class="buttonGroup">
+      <button class="newListButton" @click="inputToggle=!inputToggle">New List</button>
+      <!-- <div class="buttonGroup">
         <button class="btnGroup">Lists</button>
         <button class="btnGroup">Scheduled</button>
         <button class="btnGroup">Today</button>
-      </div>
-      <button @click="searchListBtn">Search</button>
+      </div>-->
+      <button @click="[searchToggle=!searchToggle]">Search</button>
     </nav>
     <input
       class="newListInput"
       type="text"
+      v-if="inputToggle"
       placeholder="Please Enter New List Name"
       v-model="updated"
-      @keyup.enter="createList(updated)"
+      @keyup.enter="[createList(updated),updated='',inputToggle=!inputToggle]"
+      @blur="[updated='',inputToggle = false]"
     />
     <input
       class="searchInput"
       type="text"
+      v-if="searchToggle"
       placeholder="Please Enter list name"
       v-model="searchItem"
-      @keyup="searchList(searchItem)"
+      @blur="[searchItem='',searchToggle=!searchToggle]"
     />
     <div class="listContainer">
-      <div class="individualList" v-for="list of lists" :key="list.listId">
+      <div class="individualList" v-for="list of searchList" :key="list.listId">
         <individualList
           :list="list"
-          @delete-list="$emit('delete-list',list.listId)"
-          @open-task="$emit('open-task',list.listId)"
-          @update-list="$emit('update-list',list.listId,list.listName)"
+          :deleteList="deleteList"
+          :updateList="updateList"
+          @open-task="$emit('open-task',list.listId,list.listName)"
         />
       </div>
     </div>
@@ -43,21 +46,47 @@ export default {
   components: {
     individualList
   },
+  data() {
+    return {
+      updated: "",
+      searchItem: "",
+      searchToggle: false,
+      inputToggle: false
+    };
+  },
   props: {
     lists: Array,
     createList: Function,
-    updated: String,
-    searchItem: String,
-    createListBtn: Function,
-    searchListBtn: Function,
-    searchList: Function,
-    inputToggle: Boolean,
-    inputToggleFunction: Function
+    deleteList: Function
+  },
+  computed: {
+    searchList() {
+      if (this.searchItem.length) {
+        return this.lists.filter(list =>
+          list.listName.toLowerCase().startsWith(this.searchItem.toLowerCase())
+        );
+      }
+      return this.lists.slice();
+    }
+  },
+  methods: {
+    updateList(listId, listName) {
+      window.fetch(`http://localhost:3000/list/${listId}/`, {
+        method: "PUT",
+        body: JSON.stringify({ listName: listName }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+    }
   }
 };
 </script>
 
 <style>
+.created {
+  display: none;
+}
 .listNav {
   height: 30px;
   display: flex;
@@ -65,13 +94,11 @@ export default {
   justify-content: space-between;
 }
 .newListInput {
-  display: none;
   margin-top: 10px;
   margin-left: 25%;
   width: 50%;
 }
 .searchInput {
-  display: none;
   margin-top: 10px;
   margin-left: 25%;
   width: 50%;
