@@ -1,6 +1,6 @@
 <template>
   <div :id="list.listId">
-    <div class="tasksInside" @click="$emit('open-task',list.listId)"></div>
+    <div class="tasksInside" @click="openTask(list.listId,list.listName)"></div>
     <i class="fas fa-archive" @click="deleteList(list.listId)"></i>
     <p
       class="listName"
@@ -24,7 +24,8 @@ export default {
   props: {
     list: Object,
     deleteList: Function,
-    updateList: Function
+    updateList: Function,
+    openTask: Function
   }
 };
 </script>

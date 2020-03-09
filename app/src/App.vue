@@ -2,7 +2,7 @@
   <div id="app">
     <List
       v-if="inList"
-      @open-task="openTask"
+      :openTask="openTask"
       :lists="lists"
       :createList="createList"
       :deleteList="deleteList"

@@ -32,7 +32,7 @@
           :list="list"
           :deleteList="deleteList"
           :updateList="updateList"
-          @open-task="$emit('open-task',list.listId,list.listName)"
+          :openTask="openTask"
         />
       </div>
     </div>
@@ -57,7 +57,8 @@ export default {
   props: {
     lists: Array,
     createList: Function,
-    deleteList: Function
+    deleteList: Function,
+    openTask: Function
   },
   computed: {
     searchList() {
