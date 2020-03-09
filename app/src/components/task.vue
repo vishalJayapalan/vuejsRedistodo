@@ -55,8 +55,8 @@ export default {
       array.sort(function(a, b) {
         a = new Date(a.date).getTime();
         b = new Date(b.date).getTime();
-        if ((a === b) === new Date(false).getTime()) return 0;
-        if (b === new Date(false).getTime()) return -1;
+        if (a === b) return 0;
+        if (!b) return -1;
         return a - b;
       });
 
@@ -68,8 +68,8 @@ export default {
         a = a.checked;
         b = b.checked;
         if (a === b) return 0;
-        if (a === false) return -1;
-        if (b === false) return 1;
+        if (!a) return -1;
+        if (!b) return 1;
       });
       window.fetch(
         `http://localhost:3000/tasks/${this.listId}/task/${taskId}`,
